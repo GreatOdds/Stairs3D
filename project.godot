@@ -6,16 +6,13 @@
 ;   [section] ; section goes between []
 ;   param=value ; assign values to parameters
 
-config_version=4
+config_version=5
 
 [application]
 
 config/name="CSGStairs"
+config/features=PackedStringArray("4.2")
 config/icon="res://icon.png"
-
-[editor_plugins]
-
-enabled=PoolStringArray( "res://addons/CSGStairs/plugin.cfg" )
 
 [physics]
 

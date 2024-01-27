@@ -12,22 +12,22 @@ Add points by using Ctrl + left click, delete with right click.
 
 Shift + left click and drag on points to control the curvature.
 
-    generate_bottom
+	generate_bottom
 
 Controls whether the stair generates a base to the path or not.
 
-    height
+	height
 
 The maximum distance the stairs will generate away from the path.
 
-    width, step_height
+	width, step_height
 
 ¯\\\_(ツ)\_/¯
 
-    stringer_material, riser_material, thread_material
+	stringer_material, riser_material, thread_material
 
 Materials for the side/base, front and top of steps. Using a triplanar material is recommended (especially for the stringer). Stringer material will be used if the other materials are not assigned.
 
-    use_collision, collision_layer, collision_mask
+	use_collision, collision_layer, collision_mask
 
 Collision settings for the CSG node.

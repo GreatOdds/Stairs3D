@@ -1,5 +1,5 @@
-tool
-extends Path
+@tool
+extends Path3D
 
 const THREAD_SURFACE = 0
 const RISER_SURFACE = 1
@@ -8,31 +8,30 @@ const STRINGER_SURFACE = 2
 const EPSILON = 0.001
 
 # Controls whether the stair generates a base to the path or not
-export var generate_bottom := true setget set_generate_bottom
-export var height := 1.0 setget set_height
-export var width := 1.0 setget set_width
-export var step_height := 0.25 setget set_step_height
+@export var generate_bottom := true: set = set_generate_bottom
+@export var height := 1.0: set = set_height
+@export var width := 1.0: set = set_width
+@export var step_height := 0.25: set = set_step_height
 
 # Sides and bottom of a stair
-export var stringer_material: Material setget set_stringer_material
+@export var stringer_material: Material: set = set_stringer_material
 
 # Vertical sections of the steps
-export var riser_material: Material setget set_riser_material
+@export var riser_material: Material: set = set_riser_material
 
 # Top of the steps
-export var thread_material: Material setget set_thread_material
+@export var thread_material: Material: set = set_thread_material
 
 # CSG stuff
-export var use_collision := false setget set_use_collision
-export(int, LAYERS_3D_PHYSICS) var collision_layer := 0 setget set_collision_layer
-export(int, LAYERS_3D_PHYSICS) var collision_mask := 0 setget set_collision_mask
+@export var use_collision := false: set = set_use_collision
+@export_flags_3d_physics var collision_layer := 0: set = set_collision_layer
+@export_flags_3d_physics var collision_mask := 0: set = set_collision_mask
 
-var _path_follow: PathFollow
-var _csg_mesh: CSGMesh
-
+var _path_follow: PathFollow3D
+var _csg_mesh: CSGMesh3D
 
 func _ready() -> void:
-	connect("curve_changed", self, "update_polygon")
+	curve_changed.connect(update_polygon)
 	if curve.get_point_count() < 2:
 		curve.clear_points()
 		curve.add_point(Vector3.ZERO)
@@ -67,7 +66,7 @@ func set_stringer_material(p_material: Material) -> void:
 		_csg_mesh.mesh.surface_set_material(STRINGER_SURFACE, stringer_material)
 	set_riser_material(riser_material)
 	set_thread_material(thread_material)
-	property_list_changed_notify()
+	notify_property_list_changed()
 
 
 func set_riser_material(p_material: Material) -> void:
@@ -108,7 +107,7 @@ func set_collision_mask(p_collision_mask: int) -> void:
 
 func _init_children() -> void:
 	if !_csg_mesh:
-		_csg_mesh = CSGMesh.new()
+		_csg_mesh = CSGMesh3D.new()
 		add_child(_csg_mesh)
 
 	_csg_mesh.mesh = Mesh.new()
@@ -117,19 +116,20 @@ func _init_children() -> void:
 	_csg_mesh.collision_mask = collision_mask
 
 	if !_path_follow:
-		_path_follow = PathFollow.new()
+		_path_follow = PathFollow3D.new()
+		_path_follow.use_model_front = true
 		add_child(_path_follow)
 
-	_path_follow.transform = Transform.IDENTITY
+	_path_follow.transform = Transform3D.IDENTITY
 	_path_follow.loop = false
-	_path_follow.unit_offset = 0.0
-	_path_follow.rotation_mode = PathFollow.ROTATION_ORIENTED
+	_path_follow.progress_ratio = 0.0
+	_path_follow.rotation_mode = PathFollow3D.ROTATION_ORIENTED
 
 
-func _get_vertex_position(unit_offset: float, h_offset: float, v_offset: float) -> Vector3:
+func _get_vertex_position(progress_ratio: float, h_offset: float, v_offset: float) -> Vector3:
 	if !_path_follow:
 		return Vector3.ZERO
-	_path_follow.unit_offset = unit_offset
+	_path_follow.progress_ratio = progress_ratio
 	_path_follow.h_offset = h_offset
 	_path_follow.v_offset = v_offset
 	return _path_follow.transform.origin
@@ -146,9 +146,9 @@ func update_polygon() -> void:
 	#    | /  |
 	#    |/   |
 	#    0----2
-	var thread_vertices := PoolVector3Array()
-	var thread_uvs := PoolVector2Array()
-	var thread_indices := PoolIntArray()
+	var thread_vertices := PackedVector3Array()
+	var thread_uvs := PackedVector2Array()
+	var thread_indices := PackedInt32Array()
 	var curr_thread_index := 0
 
 	#    Riser
@@ -158,7 +158,7 @@ func update_polygon() -> void:
 	#    | /  |
 	#    |/   |
 	#    0----2
-	var riser_vertices := PoolVector3Array()
+	var riser_vertices := PackedVector3Array()
 	# riser is generated using thread indices
 
 	#    Stringer       BACK       BTM
@@ -169,46 +169,46 @@ func update_polygon() -> void:
 	#    | __/|\__ |    |   \ |    | /   | /   |
 	#    |/   |   \|    |    \|    |/    |/    |
 	#    0----4---10    10---11    1-----5----11
-	var stringer_vertices := PoolVector3Array()
-	var stringer_indices := PoolIntArray()
+	var stringer_vertices := PackedVector3Array()
+	var stringer_indices := PackedInt32Array()
 	var curr_stringer_index := 0
 
 	var num_steps := height / step_height
-	var unit_offset := 0.0
+	var progress_ratio := 0.0
 	var curr_height := 0.0
 	var curr_point := Vector3.ZERO
 
 	# Generate steps until end of last step
 	for i in range(num_steps):
-		unit_offset = i / num_steps
+		progress_ratio = i / num_steps
 		curr_height = i * step_height
 
 		if i != 0:
 			if generate_bottom:
-				curr_point = _get_vertex_position(unit_offset, -width / 2, 0)  # stringer [4]
+				curr_point = _get_vertex_position(progress_ratio, -width / 2, 0)  # stringer [4]
 			else:
 				curr_point = _get_vertex_position(
-					unit_offset, -width / 2, curr_height - step_height
+					progress_ratio, -width / 2, curr_height - step_height
 				)
 			stringer_vertices.append(curr_point)
 
 			if generate_bottom:
-				curr_point = _get_vertex_position(unit_offset, width / 2, 0)  # stringer [5]
+				curr_point = _get_vertex_position(progress_ratio, width / 2, 0)  # stringer [5]
 			else:
 				curr_point = _get_vertex_position(
-					unit_offset, width / 2, curr_height - step_height
+					progress_ratio, width / 2, curr_height - step_height
 				)
 			stringer_vertices.append(curr_point)
 
 			curr_point = _get_vertex_position(
-				unit_offset, -width / 2, curr_height
+				progress_ratio, -width / 2, curr_height
 			)  # stringer [6], riser [4, 8], thread [2, 6]
 			thread_vertices.append(curr_point)
 			riser_vertices.append(curr_point)
 			stringer_vertices.append(curr_point)
 
 			curr_point = _get_vertex_position(
-				unit_offset, width / 2, curr_height
+				progress_ratio, width / 2, curr_height
 			)  # stringer [7], riser [5, 9], thread [3, 7]
 			thread_vertices.append(curr_point)
 			riser_vertices.append(curr_point)
@@ -232,13 +232,13 @@ func update_polygon() -> void:
 			stringer_indices.append(curr_stringer_index + 5)
 		else:
 			curr_point = _get_vertex_position(
-				unit_offset, -width / 2, curr_height
+				progress_ratio, -width / 2, curr_height
 			)  # stringer [0], riser [0]
 			riser_vertices.append(curr_point)
 			stringer_vertices.append(curr_point)
 
 			curr_point = _get_vertex_position(
-				unit_offset, width / 2, curr_height
+				progress_ratio, width / 2, curr_height
 			)  # stringer [1], riser [1]
 			riser_vertices.append(curr_point)
 			stringer_vertices.append(curr_point)
@@ -253,14 +253,14 @@ func update_polygon() -> void:
 			stringer_indices.append(curr_stringer_index + 5)
 
 		curr_point = _get_vertex_position(
-			unit_offset, -width / 2, curr_height + step_height
+			progress_ratio, -width / 2, curr_height + step_height
 		)  # stringer [2, 8], riser [2, 6], thread [0, 4]
 		thread_vertices.append(curr_point)
 		riser_vertices.append(curr_point)
 		stringer_vertices.append(curr_point)
 
 		curr_point = _get_vertex_position(
-			unit_offset, width / 2, curr_height + step_height
+			progress_ratio, width / 2, curr_height + step_height
 		)  # stringer [3, 9], riser [3, 7], thread [1, 5]
 		thread_vertices.append(curr_point)
 		riser_vertices.append(curr_point)
@@ -299,7 +299,7 @@ func update_polygon() -> void:
 		curr_thread_index += 4
 
 	# Generate end of stairs
-	var final_height = stepify(height - step_height * 0.5, step_height)
+	var final_height = snappedf(height - step_height * 0.5, step_height)
 	if generate_bottom:
 		curr_point = _get_vertex_position(1, -width / 2, 0)  # stringer [10]
 	else:
