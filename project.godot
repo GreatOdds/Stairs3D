@@ -10,7 +10,7 @@ config_version=5
 
 [application]
 
-config/name="CSGStairs"
+config/name="Stairs3D"
 config/tags=PackedStringArray("3d", "plugin")
 config/features=PackedStringArray("4.2")
 config/icon="res://icon.png"
