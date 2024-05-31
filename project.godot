@@ -11,8 +11,17 @@ config_version=5
 [application]
 
 config/name="CSGStairs"
+config/tags=PackedStringArray("3d", "plugin")
 config/features=PackedStringArray("4.2")
 config/icon="res://icon.png"
+
+[dotnet]
+
+project/assembly_name="CSGStairs"
+
+[editor_plugins]
+
+enabled=PackedStringArray("res://addons/Stairs3D/plugin.cfg")
 
 [physics]
 

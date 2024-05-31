@@ -6,7 +6,7 @@
    version="1.1"
    id="svg6"
    sodipodi:docname="CSGStairs.svg"
-   inkscape:version="1.1 (c68e22c387, 2021-05-23)"
+   inkscape:version="1.3.2 (091e20ef0f, 2023-11-25, custom)"
    xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
    xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
    xmlns="http://www.w3.org/2000/svg"
@@ -24,15 +24,17 @@
      showgrid="false"
      showguides="true"
      inkscape:guide-bbox="true"
-     inkscape:zoom="45.254834"
-     inkscape:cx="7.7229319"
-     inkscape:cy="8.5515726"
+     inkscape:zoom="22.627417"
+     inkscape:cx="8.8830289"
+     inkscape:cy="2.541165"
      inkscape:window-width="1248"
      inkscape:window-height="887"
-     inkscape:window-x="507"
-     inkscape:window-y="76"
+     inkscape:window-x="0"
+     inkscape:window-y="0"
      inkscape:window-maximized="0"
-     inkscape:current-layer="svg6">
+     inkscape:current-layer="svg6"
+     inkscape:showpageshadow="0"
+     inkscape:deskcolor="#505050">
     <sodipodi:guide
        position="2,14"
        orientation="0,1"
@@ -103,13 +105,30 @@
        inkscape:label=""
        inkscape:locked="false"
        inkscape:color="rgb(0,0,255)" />
+    <sodipodi:guide
+       position="1,1"
+       orientation="0,-1"
+       id="guide1"
+       inkscape:locked="false" />
+    <sodipodi:guide
+       position="3,3"
+       orientation="0,-1"
+       id="guide2"
+       inkscape:locked="false" />
+    <sodipodi:guide
+       position="13,13"
+       orientation="1,0"
+       id="guide3"
+       inkscape:locked="false" />
+    <sodipodi:guide
+       position="15,12.96875"
+       orientation="1,0"
+       id="guide4"
+       inkscape:locked="false" />
   </sodipodi:namedview>
   <path
-     d="m12 9c-.55401 0-1 .44599-1 1v1h2v2h1c.55401 0 1-.44599 1-1v-2c0-.55401-.44599-1-1-1zm1 4h-2v-2h-1c-.55401 0-1 .44599-1 1v2c0 .55401.44599 1 1 1h2c.55401 0 1-.44599 1-1z"
-     fill="#5fb2ff"
-     id="path2" />
-  <path
      id="path2193"
-     style="color:#000000;fill:#fc7f7f;-inkscape-stroke:none;fill-opacity:1"
-     d="M 9 1 L 9 5 L 5 5 L 5 9 L 1 9 L 1 15 L 2 15 L 8.2773438 15 C 8.1028641 14.704098 8 14.362856 8 14 L 8 13 L 3 13 L 3 11 L 7 11 L 7 7 L 11 7 L 11 3 L 13 3 L 13 8 L 14 8 C 14.362856 8 14.704098 8.1028641 15 8.2773438 L 15 1 L 9 1 z " />
+     style="color:#000000;fill:#fc7f7f;fill-opacity:1;-inkscape-stroke:none"
+     d="M 15,1 H 9 V 5 H 5 V 9 H 1 v 6 H 2 15 Z M 3,13 V 11 H 7 V 7 h 4 V 3 h 2 v 10 z"
+     sodipodi:nodetypes="ccccccccccccccccccc" />
 </svg>
