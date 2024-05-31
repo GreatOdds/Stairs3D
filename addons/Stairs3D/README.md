@@ -30,4 +30,4 @@ Materials for the side/base, front and top of steps. Using a triplanar material 
 
 	make_simple_collision, collision_layer, collision_mask
 
-Collision settings for the CSG node.
+Collision settings.
