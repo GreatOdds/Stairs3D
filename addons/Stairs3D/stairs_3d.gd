@@ -98,7 +98,6 @@ var collision_mask := 1:
 		if _static_body:
 			_static_body.collision_mask = collision_mask
 
-var _path_follow: PathFollow3D
 var _mesh_instance: MeshInstance3D
 var _static_body: StaticBody3D
 var _concave_shape: ConcavePolygonShape3D
@@ -117,20 +116,10 @@ func _ready() -> void:
 	queue_update()
 
 func _init_children() -> void:
-	if not _path_follow:
-		_path_follow = PathFollow3D.new()
-		_path_follow.transform = Transform3D.IDENTITY
-		_path_follow.loop = false
-		_path_follow.progress_ratio = 0.0
-		_path_follow.rotation_mode = PathFollow3D.ROTATION_ORIENTED
-		_path_follow.use_model_front = true
-		add_child(_path_follow, false, Node.INTERNAL_MODE_BACK)
-
 	if not _mesh_instance:
 		_mesh_instance = MeshInstance3D.new()
 		_mesh_instance.owner = owner
-		add_child(_mesh_instance)
-		#add_child(_mesh_instance, false, Node.INTERNAL_MODE_BACK)
+		add_child(_mesh_instance, false, Node.INTERNAL_MODE_BACK)
 
 	if not _static_body:
 		_static_body = StaticBody3D.new()
@@ -145,12 +134,13 @@ func _init_children() -> void:
 		_static_body.add_child(collision_shape)
 
 func _get_vertex_position(progress_ratio: float, h_offset: float, v_offset: float) -> Vector3:
-	if not _path_follow:
-		return Vector3.ZERO
-	_path_follow.progress_ratio = progress_ratio
-	_path_follow.h_offset = h_offset
-	_path_follow.v_offset = v_offset
-	return _path_follow.transform.origin
+	var progress := progress_ratio * curve.get_baked_length()
+	var t := curve.sample_baked_with_rotation(progress, true, true)
+
+	t.basis *= Basis.from_scale(Vector3(-1.0, 1.0,-1.0))
+
+	t = t.translated_local(Vector3(h_offset, v_offset, 0.0))
+	return t.origin
 
 func _update() -> void:
 	var vertices := _create_stair_vertices(false)

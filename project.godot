@@ -12,7 +12,7 @@ config_version=5
 
 config/name="Stairs3D"
 config/tags=PackedStringArray("3d", "plugin")
-config/features=PackedStringArray("4.2")
+config/features=PackedStringArray("4.3")
 config/icon="res://icon.png"
 
 [dotnet]
